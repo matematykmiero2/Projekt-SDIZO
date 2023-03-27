@@ -1,0 +1,5 @@
+C:/Users/matem/source/repos/projekt/out/build/x64-release/CMakeFiles/edit_cache.dir
+C:/Users/matem/source/repos/projekt/out/build/x64-release/CMakeFiles/rebuild_cache.dir
+C:/Users/matem/source/repos/projekt/out/build/x64-release/projekt/CMakeFiles/projekt.dir
+C:/Users/matem/source/repos/projekt/out/build/x64-release/projekt/CMakeFiles/edit_cache.dir
+C:/Users/matem/source/repos/projekt/out/build/x64-release/projekt/CMakeFiles/rebuild_cache.dir
