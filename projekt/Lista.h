@@ -22,6 +22,7 @@ public:
 	void usun(int wartosc);
 	void usunp();
 	void usunk();
+	void usuns(int index);
 	void wyswietl();
 	void wyswietlOdTylu();
 	void stworz(int size);

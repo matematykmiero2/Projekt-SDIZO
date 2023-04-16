@@ -12,6 +12,7 @@ public:
 	void dodaj(int wartosc);
 	void wyswietl();
 	void usunW(int i);
+	void usunKorzen();
 	void gotowiec(string sp, string sn, int v);
 	void stworz(int size);
 	void naprawianieg(int rozmiar);

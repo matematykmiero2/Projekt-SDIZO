@@ -14,6 +14,7 @@ Lista :: ~Lista() {
 	while (head) usunp();
 }
 
+//funkcja pobiera dane z pliku tekstoweg i generuje z nich liste
 void Lista::daneZPliku(string plik) {									//OK
 	ifstream odczyt(plik);
 	if (odczyt.is_open()) {
@@ -31,6 +32,7 @@ void Lista::daneZPliku(string plik) {									//OK
 	}
 }
 
+//funkcja zwraca wskaznik na miejsce w liscie gdzie znajduje sie szukany element
 Lista :: Elemlist* Lista::czyZawiera(int wartosc)									//OK
 {
 	Elemlist* temp=head;
@@ -43,6 +45,7 @@ Lista :: Elemlist* Lista::czyZawiera(int wartosc)									//OK
 	return NULL;
 }
 
+//funkcja dodaje element na zadany index
 void Lista::dodaj(int index, int wartosc)
 {
 	if (index > rozmiar())return;
@@ -69,7 +72,7 @@ void Lista::dodaj(int index, int wartosc)
 }
 
 
-
+// dodanie na poczatek listy
 void Lista::dodajp(int wartosc) {									//OK
 	
 	Elemlist* p = new Elemlist();
@@ -86,6 +89,7 @@ void Lista::dodajp(int wartosc) {									//OK
 
 }
 
+//dodanie na koniec listy
 void Lista::dodajk(int wartosc) {									//OK
 	if (head == nullptr) {
 		dodajp(wartosc);
@@ -101,7 +105,7 @@ void Lista::dodajk(int wartosc) {									//OK
 }
 
 
-
+//usuwanie z poczatku
 void Lista::usunp()								//OK
 {
 
@@ -116,6 +120,7 @@ void Lista::usunp()								//OK
 	}
 }
 
+//usuwanie z konca
 void Lista::usunk()								//OK
 {
 	if (head == nullptr) {
@@ -132,6 +137,7 @@ void Lista::usunk()								//OK
 
 }
 
+//usuwanie elementu o zadanej wartosci z listy
 void Lista::usun(int wartosc) {								//OK
 	Elemlist* p = czyZawiera(wartosc);
 	if (p == NULL)return;
@@ -159,6 +165,26 @@ void Lista::usun(int wartosc) {								//OK
 
 }
 
+
+//usuwanie elementu o zadanym indeksie z listy
+void Lista::usuns(int index) {								//OK
+	Elemlist* usuwany = head;
+	for (int i = 0; i < index; i++) {
+		usuwany = usuwany->next;
+	}
+
+	Elemlist* pprev, * pnext;
+	pprev = usuwany->prev;
+	pnext = usuwany->next;
+
+	pprev->next = pnext;
+	pnext->prev = pprev;
+
+	delete usuwany;
+
+}
+
+//funkjca wyswietlajaca liste
 void Lista::wyswietl() {								//OK
 	Elemlist* temp = head;
 	cout << endl;
@@ -169,6 +195,8 @@ void Lista::wyswietl() {								//OK
 	
 	wyswietlOdTylu();
 }
+
+//funkjca wyswietlajaca liste od tylu
 void Lista::wyswietlOdTylu()								//OK
 {
 	Elemlist* temp = tail;
@@ -179,18 +207,20 @@ void Lista::wyswietlOdTylu()								//OK
 	}
 	
 }
+//funkcja tworzy liste o zadanej wielkosci i wypelnia losowymi wartosciami
 void  Lista::stworz(int size) {								//OK
 	head = nullptr;
 	tail = nullptr;
 	srand(time(NULL));
 	int x;
 	for (int i = 0; i < size; i++) {
-		x = rand() % 100;
+		x = rand() % 1000000;
 		dodajk(x);
 	}
 	
 }
 
+//zwraca informacje o ilosci elementow
 int Lista::rozmiar()
 {
 	Elemlist* temp = head;
@@ -202,6 +232,7 @@ int Lista::rozmiar()
 	return licznik;
 }
 
+//funkcja wykonujue pomiary czasow
 void Lista::czas(int ilosc_wyk, int wielkosc, int ilosc_op) {									//OK
 	ofstream plik1("czasy_lista1.txt");
 	ofstream plik2("czasy_lista2.txt");
@@ -209,22 +240,20 @@ void Lista::czas(int ilosc_wyk, int wielkosc, int ilosc_op) {									//OK
 	ofstream plik4("czasy_lista4.txt");
 	ofstream plik5("czasy_lista5.txt");
 	ofstream plik6("czasy_lista6.txt");
+	ofstream plik7("czasy_lista7.txt");
 	using namespace std::chrono;
 	srand(time(NULL));
 	int a;
 	int wielkoscb, ilosc_opb;
 	auto old = steady_clock::now();
 	auto t1 = steady_clock::now() - old;
-	auto t2 = steady_clock::now() - old;
-	auto t3 = steady_clock::now() - old;
-	auto t4 = steady_clock::now() - old;
-	auto t5 = steady_clock::now() - old;
-	auto t6 = steady_clock::now() - old;
 
+	
 	plik1 << "Dodawanie na pocz¹tek\n";
 	wielkoscb = wielkosc;
 	ilosc_opb = ilosc_op;
-	for (int i = 0; i < 8; i++) {
+	int liczba;
+	for (int i = 0; i < 10; i++) {
 		old = steady_clock::now();
 		t1 = steady_clock::now() - old;
 
@@ -233,11 +262,14 @@ void Lista::czas(int ilosc_wyk, int wielkosc, int ilosc_op) {									//OK
 		cout << "\nDodawanie na poczatek";
 		for (int i = 0; i < ilosc_wyk; i++) {
 			stworz(wielkoscb);
-			old = steady_clock::now();
+			
 			for (int j = 0; j < ilosc_opb; j++) {
-				dodajp(55);
+				liczba = rand() % 1000000;
+				old = steady_clock::now();
+				dodajp(liczba);
+				t1 += steady_clock::now() - old;
 			}
-			t1 += steady_clock::now() - old;
+			
 		}
 		cout << endl << i << " Uzyskany czas [ns]:		";
 		cout << duration_cast<nanoseconds>(t1).count();
@@ -248,33 +280,38 @@ void Lista::czas(int ilosc_wyk, int wielkosc, int ilosc_op) {									//OK
 	plik2 << "Dodawanie na koniec\n";
 	wielkoscb = wielkosc;
 	ilosc_opb = ilosc_op;
-	for (int i = 0; i < 8; i++) {
+
+	for (int i = 0; i < 10; i++) {
 		old = steady_clock::now();
-		t2 = steady_clock::now() - old;
+		t1 = steady_clock::now() - old;
 
 		wielkoscb = wielkoscb * 2;
 		ilosc_opb = wielkoscb / 20;
 		cout << "\n\nDodawanie na koniec";
 		for (int i = 0; i < ilosc_wyk; i++) {
 			stworz(wielkoscb);
-			old = steady_clock::now();
+	
 			for (int j = 0; j < ilosc_opb; j++) {
+				liczba = rand() % 1000000;
+				old = steady_clock::now();
 				dodajk(55);
+				t1 += steady_clock::now() - old;
 			}
-			t2 += steady_clock::now() - old;
+	
 		}
 		cout << "\nUzyskany czas [ns]:		";
-		cout << duration_cast<nanoseconds>(t2).count();
-		cout << "\nSredni czas [ns]:		" << duration_cast<nanoseconds>(t2).count() / (ilosc_wyk * ilosc_opb);
-		plik2 << wielkoscb << ";" << duration_cast<nanoseconds>(t2).count() / (ilosc_wyk * ilosc_opb) << endl;
+		cout << duration_cast<nanoseconds>(t1).count();
+		cout << "\nSredni czas [ns]:		" << duration_cast<nanoseconds>(t1).count() / (ilosc_wyk * ilosc_opb);
+		plik2 << wielkoscb << ";" << duration_cast<nanoseconds>(t1).count() / (ilosc_wyk * ilosc_opb) << endl;
 	}
 	/////////////////////////////////////////////////////////////////////////////////////////////
 	plik3 << "Dodawanie nie na poczatek nie na koniec\n";
 	wielkoscb = wielkosc;
 	ilosc_opb = ilosc_op;
-	for (int i = 0; i < 8; i++) {
+
+	for (int i = 0; i < 10; i++) {
 		old = steady_clock::now();
-		t3 = steady_clock::now() - old;
+		t1 = steady_clock::now() - old;
 
 		wielkoscb = wielkoscb * 2;
 		ilosc_opb = wielkoscb / 20;
@@ -284,24 +321,25 @@ void Lista::czas(int ilosc_wyk, int wielkosc, int ilosc_op) {									//OK
 
 			for (int j = 0; j < ilosc_opb; j++) {
 				a = 1 + rand() % (wielkoscb + j);
+				liczba = rand() % 1000000;
 				old = steady_clock::now();
-				dodaj(a, 55);
-				t3 += steady_clock::now() - old;
+				dodaj(a, liczba);
+				t1 += steady_clock::now() - old;
 			}
 
 		}
 		cout << "\nUzyskany czas [ns]:		";
-		cout << duration_cast<nanoseconds>(t3).count();
-		cout << "\nSredni czas [ns]:		" << duration_cast<nanoseconds>(t3).count() / (ilosc_wyk * ilosc_opb);
-		plik3 << wielkoscb << ";" << duration_cast<nanoseconds>(t3).count() / (ilosc_wyk * ilosc_opb) << endl;
+		cout << duration_cast<nanoseconds>(t1).count();
+		cout << "\nSredni czas [ns]:		" << duration_cast<nanoseconds>(t1).count() / (ilosc_wyk * ilosc_opb);
+		plik3 << wielkoscb << ";" << duration_cast<nanoseconds>(t1).count() / (ilosc_wyk * ilosc_opb) << endl;
 	}
 	/////////////////////////////////////////////////////////////////////////////////////////////
 	plik4 << "Uzuwanie z pocz¹tku\n";
 	wielkoscb = wielkosc;
 	ilosc_opb = ilosc_op;
-	for (int i = 0; i < 8; i++) {
+	for (int i = 0; i < 10; i++) {
 		old = steady_clock::now();
-		t4 = steady_clock::now() - old;
+		t1 = steady_clock::now() - old;
 
 		wielkoscb = wielkoscb * 2;
 		ilosc_opb = wielkoscb / 20;
@@ -312,20 +350,20 @@ void Lista::czas(int ilosc_wyk, int wielkosc, int ilosc_op) {									//OK
 			for (int j = 0; j < ilosc_opb; j++) {
 				usunp();
 			}
-			t4 += steady_clock::now() - old;
+			t1 += steady_clock::now() - old;
 		}
 		cout << "\nUzyskany czas [ns]:		";
-		cout << duration_cast<nanoseconds>(t4).count();
-		cout << "\nSredni czas [ns]:		" << duration_cast<nanoseconds>(t4).count() / (ilosc_wyk * ilosc_opb);
-		plik4 << wielkoscb << ";" << duration_cast<nanoseconds>(t4).count() / (ilosc_wyk * ilosc_opb) << endl;
+		cout << duration_cast<nanoseconds>(t1).count();
+		cout << "\nSredni czas [ns]:		" << duration_cast<nanoseconds>(t1).count() / (ilosc_wyk * ilosc_opb);
+		plik4 << wielkoscb << ";" << duration_cast<nanoseconds>(t1).count() / (ilosc_wyk * ilosc_opb) << endl;
 	}
-	/////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////
 	plik5 << "Usowanie ze srodka\n";
 	wielkoscb = wielkosc;
 	ilosc_opb = ilosc_op;
-	for (int i = 0; i < 8; i++) {
+	for (int i = 0; i < 10; i++) {
 		old = steady_clock::now();
-		t5 = steady_clock::now() - old;
+		t1 = steady_clock::now() - old;
 
 		wielkoscb = wielkoscb * 2;
 		ilosc_opb = ilosc_opb * 2;
@@ -334,25 +372,52 @@ void Lista::czas(int ilosc_wyk, int wielkosc, int ilosc_op) {									//OK
 			stworz(wielkoscb);
 
 			for (int j = 0; j < ilosc_opb; j++) {
-				a = 1 + rand() % (wielkoscb - j - 1);
+				a = 1 + rand() % (wielkoscb - j - 2);
 				old = steady_clock::now();
-				usun(a);
-				t5 += steady_clock::now() - old;
+				usuns(a);
+				t1 += steady_clock::now() - old;
 			}
 
 		}
 		cout << "\nUzyskany czas [ns]:		";
-		cout << duration_cast<nanoseconds>(t5).count();
-		cout << "\nSredni czas [ns]:		" << duration_cast<nanoseconds>(t5).count() / (ilosc_wyk * ilosc_opb);
-		plik5 << wielkoscb << ";" << duration_cast<nanoseconds>(t5).count() / (ilosc_wyk * ilosc_opb) << endl;
+		cout << duration_cast<nanoseconds>(t1).count();
+		cout << "\nSredni czas [ns]:		" << duration_cast<nanoseconds>(t1).count() / (ilosc_wyk * ilosc_opb);
+		plik5 << wielkoscb << ";" << duration_cast<nanoseconds>(t1).count() / (ilosc_wyk * ilosc_opb) << endl;
 	}
-	/////////////////////////////////////////////////////////////////////////////////////////////
-	plik6 << "Wyszukiwanie elementu\n";
+	//////////////////////////////////////////////////////////////////////////////////////////////
+	plik6 << "Usowanie z konca\n";
 	wielkoscb = wielkosc;
 	ilosc_opb = ilosc_op;
-	for (int i = 0; i < 8; i++) {
+	for (int i = 0; i < 10; i++) {
 		old = steady_clock::now();
-		t6 = steady_clock::now() - old;
+		t1 = steady_clock::now() - old;
+
+		wielkoscb = wielkoscb * 2;
+		ilosc_opb = ilosc_opb * 2;
+		cout << "\n\nUsowanie z konca";
+		for (int i = 0; i < ilosc_wyk; i++) {
+			stworz(wielkoscb);
+
+			for (int j = 0; j < ilosc_opb; j++) {
+				old = steady_clock::now();
+				usunk();
+				t1 += steady_clock::now() - old;
+			}
+
+		}
+		cout << "\nUzyskany czas [ns]:		";
+		cout << duration_cast<nanoseconds>(t1).count();
+		cout << "\nSredni czas [ns]:		" << duration_cast<nanoseconds>(t1).count() / (ilosc_wyk * ilosc_opb);
+		plik6 << wielkoscb << ";" << duration_cast<nanoseconds>(t1).count() / (ilosc_wyk * ilosc_opb) << endl;
+	}
+	/////////////////////////////////////////////////////////////////////////////////////////////
+	plik7 << "Wyszukiwanie elementu\n";
+	wielkoscb = wielkosc;
+	ilosc_opb = ilosc_op;
+	Elemlist* temp;
+	for (int i = 0; i < 10; i++) {
+		old = steady_clock::now();
+		t1 = steady_clock::now() - old;
 
 		wielkoscb = wielkoscb * 2;
 		ilosc_opb = wielkoscb / 20;
@@ -362,19 +427,20 @@ void Lista::czas(int ilosc_wyk, int wielkosc, int ilosc_op) {									//OK
 			stworz(wielkoscb);
 
 			for (int j = 0; j < ilosc_opb; j++) {
-				a = rand() % 1000;
+				a = rand() % 1000000;
 				old = steady_clock::now();
-				czyZawiera(a);
-				t6 += steady_clock::now() - old;
+				temp=czyZawiera(a);
+				t1 += steady_clock::now() - old;
 			}
 
 		}
+		cout << temp;
 		cout << "\nUzyskany czas [ns]:		";
-		cout << duration_cast<nanoseconds>(t6).count();
-		cout << "\nSredni czas [ns]:		" << duration_cast<nanoseconds>(t6).count() / (ilosc_wyk * ilosc_opb);
-		plik6 << wielkoscb << ";" << duration_cast<nanoseconds>(t6).count() / (ilosc_wyk * ilosc_opb) << endl;
+		cout << duration_cast<nanoseconds>(t1).count();
+		cout << "\nSredni czas [ns]:		" << duration_cast<nanoseconds>(t1).count() / (ilosc_wyk * ilosc_opb);
+		plik7 << wielkoscb << ";" << duration_cast<nanoseconds>(t1).count() / (ilosc_wyk * ilosc_opb) << endl;
 	}
-
+	
 
 	plik1.close();
 	plik2.close();
@@ -382,5 +448,6 @@ void Lista::czas(int ilosc_wyk, int wielkosc, int ilosc_op) {									//OK
 	plik4.close();
 	plik5.close();
 	plik6.close();
+	plik7.close();
 }
 

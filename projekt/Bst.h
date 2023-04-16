@@ -20,6 +20,7 @@ public:
 	void prostowanie();
 	void balansowanie();
 	void dodaj(int wartosc);
+	void usunK();
 	void usun(int wartosc);
 	Elemheap* minimum(Elemheap* buf);
 	Elemheap* maksimum(Elemheap* buf);

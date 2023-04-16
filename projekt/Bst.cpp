@@ -7,6 +7,7 @@ string cR, cL, cP;
 int wezly = 0;
 
 
+//gotowiec wyswietlajacy drzewo
 void Bst:: printBT(string sp, string sn, Elemheap* v)			//GOTOWIEC
 {
 	string s;
@@ -37,6 +38,7 @@ Bst::~Bst()
 	while (root) (usun(root->dane));
 }
 
+//funkcja pobiera dane z pliku i tworzy z nich drzewo
 void Bst::daneZPliku(string plik)
 {
 	ifstream odczyt(plik);
@@ -59,6 +61,7 @@ void Bst::daneZPliku(string plik)
 	}
 }
 
+//funkcje zwracajace adres elementu w tablicy o zadanej wartosci
 Bst::Elemheap* Bst::czyZawiera(int wartosc)			//OK
 {
 	return czyZawiera2(root, wartosc);
@@ -70,6 +73,7 @@ Bst::Elemheap* Bst::czyZawiera2(Elemheap* buf, int wartosc)			//OK
 	else return(czyZawiera2(buf->prawy, wartosc));
 }
 
+//rotacja w prawo wzgledem elementu A
 void Bst::rotacjaPrawo(Elemheap* A)		//wygl¹da git
 {
 	if (A == NULL)return;
@@ -91,6 +95,7 @@ void Bst::rotacjaPrawo(Elemheap* A)		//wygl¹da git
 
 }
 
+//rotacja w lewo wzgledem elementu A
 void Bst::rotacjaLewo(Elemheap* A)	// jak w prawo tylko w lewo
 {
 	if (A == NULL)return;
@@ -109,12 +114,9 @@ void Bst::rotacjaLewo(Elemheap* A)	// jak w prawo tylko w lewo
 	}
 	else root = B;
 
-
-
-
-
 }
 
+//funkcja prostujaca drzewo
 void Bst::prostowanie()	//jak rostacja dzia³a to to te¿
 {
 	Elemheap* temp = root;
@@ -129,6 +131,7 @@ void Bst::prostowanie()	//jak rostacja dzia³a to to te¿
 	//wyswietl();
 }
 
+//funkcja rownowazaca drzewo
 void Bst::balansowanie()			//OK
 {
 	
@@ -161,7 +164,8 @@ void Bst::balansowanie()			//OK
 	
 }
 
-void Bst::dodaj(int wartosc)			//BEZ RÓWNOWAZENIA
+//funkjca dodajaca element o zadanej wartosci
+void Bst::dodaj(int wartosc)		
 {
 	wezly++;
 	Elemheap* nowy= new Elemheap();
@@ -190,9 +194,30 @@ void Bst::dodaj(int wartosc)			//BEZ RÓWNOWAZENIA
 		}
 		
 	}
-	balansowanie();
+	//balansowanie();
 }
 
+void Bst::usunK()
+{
+	Elemheap* y = nastepnik(root);
+	Elemheap* x = root;
+	Elemheap* id = root;
+	if (y->lewy != NULL) x = y->lewy;
+	else x = y->prawy;
+
+	if (x != NULL) x->rodzic = y->rodzic;
+
+	if (y->rodzic == NULL) root = x;
+	else {
+		if (y == y->rodzic->lewy) y->rodzic->lewy = x;
+		else y->rodzic->prawy = x;
+	}
+	if (y != id) id->dane = y->dane;
+	delete y;
+	wezly--;
+}
+
+//funkcja usuwajaca element o zadanej wartosci
 void Bst::usun(int wartosc)
 {
 	Elemheap* y = NULL;
@@ -218,20 +243,21 @@ void Bst::usun(int wartosc)
 	balansowanie();
 }
 
+//funkcja zwraca wartosc minimalna elementu w drzewie
 Bst::Elemheap* Bst::minimum(Elemheap* buf)			//OK
 {
 	while (buf->lewy != NULL)
 		buf = buf->lewy;
 	return buf;
 }
-
+//funkcja zwraca wartosc maksymalna elementu w drzewie
 Bst::Elemheap* Bst::maksimum(Elemheap* buf)			//OK
 {
 	while (buf->prawy != NULL)
 		buf = buf->prawy;
 	return buf;
 }
-
+//funkcja zwraca wskaznik na nastepnia
 Bst::Elemheap* Bst::nastepnik(Elemheap* buf)
 {
 	Elemheap* buft = new Elemheap();
@@ -243,7 +269,7 @@ Bst::Elemheap* Bst::nastepnik(Elemheap* buf)
 	}
 	return buft;
 }
-
+//funkcja zwraca wskaznik na poprzednika
 Bst::Elemheap* Bst::poprzednik(Elemheap* buf)
 {
 	Elemheap* buft = new Elemheap();
@@ -256,6 +282,7 @@ Bst::Elemheap* Bst::poprzednik(Elemheap* buf)
 	return buft;
 }
 
+//funkcja wyswietla drzewo
 void Bst::wyswietl()			//OK
 {
 	cout << "\n\n";
@@ -281,11 +308,13 @@ void Bst::wyswietl()			//OK
 	
 }
 
+//funkcja wypisujaca element p 
 void Bst::P(Elemheap* p)			//OK
 {	
 	cout << p->dane << " ";
 }
 
+//funkcja wyswietla elementy w kolejnosci preorder
 void Bst::preorder(Elemheap* p)			//OK
 {
 	if (p == NULL) return;
@@ -294,7 +323,7 @@ void Bst::preorder(Elemheap* p)			//OK
 	preorder(p->prawy);
 
 }
-
+//funkcja wyswietla elementy w kolejnosci inorder
 void Bst::inorder(Elemheap* p)			//OK
 {
 	if (p == NULL) return;
@@ -302,7 +331,7 @@ void Bst::inorder(Elemheap* p)			//OK
 	P(p);
 	inorder(p->prawy);
 }
-
+//funkcja wyswietla elementy w kolejnosci postorder
 void Bst::postorder(Elemheap* p)			//OK
 {
 	if (p == NULL) return;
@@ -317,7 +346,7 @@ void Bst::stworz(int size)
 	root = NULL;
 	int liczba;
 	for (int i = 0; i < size; i++) {
-		liczba = rand() % 100;
+		liczba = rand() % 1000000;
 		dodaj(liczba);
 	}
 	
@@ -334,25 +363,23 @@ void Bst::czas(int ilosc_wyk, int wielkosc, int ilosc_op) {									//OK
 	int wielkoscb, ilosc_opb;
 	auto old = steady_clock::now();
 	auto t1 = steady_clock::now() - old;
-	auto t2 = steady_clock::now() - old;
-	auto t3 = steady_clock::now() - old;
-	auto t4 = steady_clock::now() - old;
 
 	plik1 << "Dodawanie elementu z rownowazeniem\n";
 	wielkoscb = wielkosc;
 	ilosc_opb = ilosc_op;
-	for (int i = 0; i < 6; i++) {
+	for (int i = 0; i < 10; i++) {
 		old = steady_clock::now();
 		t1 = steady_clock::now() - old;
-		wielkoscb = wielkoscb * 2;
+		wielkoscb = wielkoscb * 1.5;
 		ilosc_opb = wielkoscb / 20;
 		cout << "\nDodawanie elementu z rownowazeniem";
 		for (int i = 0; i < ilosc_wyk; i++) {
 			stworz(wielkoscb);
 			for (int j = 0; j < ilosc_op; j++) {
-				a = rand() % 10000;
+				a = rand() % 1000000;
 				old = steady_clock::now();
 				dodaj(a);
+				balansowanie();
 				t1 += steady_clock::now() - old;
 			}
 		}
@@ -365,77 +392,81 @@ void Bst::czas(int ilosc_wyk, int wielkosc, int ilosc_op) {									//OK
 	plik2 << "Usuwanie korzenia\n";
 	wielkoscb = wielkosc;
 	ilosc_opb = ilosc_op;
-	for (int i = 0; i < 6; i++) {
+	for (int i = 0; i < 10; i++) {
 		old = steady_clock::now();
-		t2 = steady_clock::now() - old;
+		t1 = steady_clock::now() - old;
 		wielkoscb = wielkoscb * 2;
 		ilosc_opb = wielkoscb / 20;
 		cout << "\n\nUsuwanie korzenia";
 		for (int i = 0; i < ilosc_wyk; i++) {
 			stworz(wielkoscb);
-			old = steady_clock::now();
+			balansowanie();
+			
 			for (int j = 0; j < ilosc_opb; j++) {
-				usun(root->dane);
+				old = steady_clock::now();
+				usunK();
+				balansowanie();
+				t1 += steady_clock::now() - old;
 			}
-			t2 += steady_clock::now() - old;
+			
 		}
 		cout << "\nUzyskany czas [ns]:		";
-		cout << duration_cast<nanoseconds>(t2).count();
-		cout << "\nSredni czas [ns]:		" << duration_cast<nanoseconds>(t2).count() / (ilosc_wyk);
-		plik2 << wielkoscb << ";" << duration_cast<nanoseconds>(t2).count() / (ilosc_wyk) << endl;
+		cout << duration_cast<nanoseconds>(t1).count();
+		cout << "\nSredni czas [ns]:		" << duration_cast<nanoseconds>(t1).count() / (ilosc_wyk* ilosc_opb);
+		plik2 << wielkoscb << ";" << duration_cast<nanoseconds>(t1).count() / (ilosc_wyk* ilosc_opb) << endl;
 	}
 	/////////////////////////////////////////////////////////////////////////////////////////////
 	plik3 << "Rownowazenie drzewa\n";
 	wielkoscb = wielkosc;
 	ilosc_opb = ilosc_op;
-	for (int i = 0; i < 6; i++) {
+	for (int i = 0; i < 10; i++) {
 		old = steady_clock::now();
-		t3 = steady_clock::now() - old;
+		t1 = steady_clock::now() - old;
 
 		wielkoscb = wielkoscb * 2;
 		ilosc_opb = wielkoscb / 20;
 		cout << "\n\nRownowazenie drzewa";
-		for (int i = 0; i < ilosc_wyk; i++) {
+		for (int i = 0; i < ilosc_wyk*10; i++) {
 			
 				stworz(wielkoscb);
 				old = steady_clock::now();
 				balansowanie();
-				t3 = steady_clock::now() - old;
+				t1 = steady_clock::now() - old;
 			
 		}
 		cout << "\nUzyskany czas [ns]:		";
-		cout << duration_cast<nanoseconds>(t3).count();
-		cout << "\nSredni czas [ns]:		" << duration_cast<nanoseconds>(t3).count() / (ilosc_wyk);
-		plik3 << wielkoscb << ";" << duration_cast<nanoseconds>(t3).count() / (ilosc_wyk) << endl;
+		cout << duration_cast<nanoseconds>(t1).count();
+		cout << "\nSredni czas [ns]:		" << duration_cast<nanoseconds>(t1).count() / (ilosc_wyk*10);
+		plik3 << wielkoscb << ";" << duration_cast<nanoseconds>(t1).count() / (ilosc_wyk*10) << endl;
 	}
 	/////////////////////////////////////////////////////////////////////////////////////////////
 	plik4 << "Wyszukiwanie elementu\n";
 	wielkoscb = wielkosc;
 	ilosc_opb = ilosc_op;
 	Elemheap* temp;
-	for (int i = 0; i < 6; i++) {
+	for (int i = 0; i < 10; i++) {
 		old = steady_clock::now();
-		t4 = steady_clock::now() - old;
+		t1 = steady_clock::now() - old;
 
 		wielkoscb = wielkoscb * 2;
 		ilosc_opb = wielkoscb / 20;
 		cout << "\n\nWyszukiwanie elementu";
 		for (int i = 0; i < ilosc_wyk; i++) {
 			stworz(wielkoscb);
-			
+			balansowanie();
 			for (int j = 0; j < ilosc_opb; j++) {
-				a = rand() % 1000;
+				a = rand() % 1000000;
 				old = steady_clock::now();
 				temp=czyZawiera(a);
-				t4 += steady_clock::now() - old;
+				t1 += steady_clock::now() - old;
 			}
 			
 		}
 		cout << temp;
 		cout << "\nUzyskany czas [ns]:		";
-		cout << duration_cast<nanoseconds>(t4).count();
-		cout << "\nSredni czas [ns]:		" << duration_cast<nanoseconds>(t4).count() / (ilosc_wyk * ilosc_opb);
-		plik4 << wielkoscb << ";" << duration_cast<nanoseconds>(t4).count() / (ilosc_wyk * ilosc_opb) << endl;
+		cout << duration_cast<nanoseconds>(t1).count();
+		cout << "\nSredni czas [ns]:		" << duration_cast<nanoseconds>(t1).count() / (ilosc_wyk * ilosc_opb);
+		plik4 << wielkoscb << ";" << duration_cast<nanoseconds>(t1).count() / (ilosc_wyk * ilosc_opb) << endl;
 	}
 
 	plik1.close();

@@ -56,7 +56,7 @@ void menuBST() {
 		break;
 
 	case '7':
-		bst->czas(20, ix, ix / 10);
+		bst->czas(100, ix, ix / 10);
 		break;
 
 	case '0':

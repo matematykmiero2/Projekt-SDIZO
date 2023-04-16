@@ -7,9 +7,7 @@ class Rbt
 		Elem* rodzic, * lewy, * prawy;
 		char kolor;	// B - czarne R - czerwone
 	};
-
 	Elem* root;
-
 public:
 	Rbt();
 	~Rbt();
@@ -29,9 +27,9 @@ public:
 	void preorder(Elem* p);
 	void inorder(Elem* p);
 	void postorder(Elem* p);
-	void P(Elem* p);
 	void stworz(int size);
-	void czas();
+	void czas(int ilosc_wyk, int wielkosc, int ilosc_op);
+	
 
 	void printRBT(string sp, string sn, Elem* v);
 };

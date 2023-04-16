@@ -58,7 +58,7 @@ void menuLista() {
 
 
 	case '7':
-		lista->czas(20, ix, ix / 10);
+		lista->czas(100, ix, ix / 10);
 		break;
 
 	case '0':

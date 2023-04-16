@@ -58,7 +58,7 @@ void menuTablica() {
 		tablica->wyswietl();
 		break;
 	case '7':
-			tablica->czas(20, ix, ix/10);
+			tablica->czas(100, ix, ix/10);
 		break;
 	case '0':
 		system("cls");

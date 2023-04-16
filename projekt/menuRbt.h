@@ -6,7 +6,7 @@ void menuRbt() {
 	char wybor2;
 	string plik;
 	int index, wartosc;
-
+	int ix = 200;
 	wybor2 = getche();
 	switch (wybor2) {
 	case '1':
@@ -56,7 +56,7 @@ void menuRbt() {
 		break;
 
 	case '7':
-		rbt->czas();
+		rbt->czas(100, ix, ix / 10);
 		break;
 
 	case '0':

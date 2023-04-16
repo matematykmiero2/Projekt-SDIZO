@@ -57,7 +57,7 @@ void menuKopiec() {
 		break;
 
 	case '7':
-		kopiec->czas(20, ix, ix / 10);
+		kopiec->czas(100, ix, ix / 10);
 		break;
 
 	case '0':

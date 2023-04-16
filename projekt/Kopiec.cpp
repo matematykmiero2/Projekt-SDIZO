@@ -5,7 +5,7 @@ int x = 10, y = 10, z = 5;	// x - ilosc wykonan, y - wielkosc kopca, z - ilosc d
 
 
 string cr, cl, cp;
-
+using namespace std;
 Kopiec::Kopiec()
 {
 	ilosc = 0;
@@ -19,6 +19,7 @@ Kopiec::~Kopiec()
 	delete kopiec;
 }
 
+//funkcja pobiera dane z pliku tekstoweg i generuje z nich kopiec rownowazac metoda Floyda
 void Kopiec::daneZPliku(string plik)				//OK
 {
 	ifstream odczyt(plik);
@@ -40,6 +41,7 @@ void Kopiec::daneZPliku(string plik)				//OK
 
 }
 
+//funkcja zwraca indeks pod ktorym znajduje sie wartosc(-1 jak nie ma)
 int Kopiec::czyZawiera(int wartosc)				//OK
 {
 	for (int i = 0; i < ilosc; i++) {
@@ -50,15 +52,16 @@ int Kopiec::czyZawiera(int wartosc)				//OK
 	return -1;
 }
 
+//dodaje element do kopca i naprawia w gore
 void Kopiec::dodaj(int wartosc)				//OK
 {
 	ilosc++;
 	kopiec[ilosc-1] = wartosc;
+
 	naprawianieg(ilosc - 1);
-	
 }
 
-
+//funkjca wyswietla kopiec (gotowiec symulujacy drzewo)
 void Kopiec::wyswietl()				//OK
 {
 	cr = cl = cp = "  ";
@@ -74,6 +77,7 @@ void Kopiec::wyswietl()				//OK
 	gotowiec("", "", 0);
 }
 
+//funkcja symulujaca wyswietlanie drzewa (gotowiec z internetu)
 void Kopiec:: gotowiec(string sp, string sn, int v) {				//GOTOWIEC
 	string s;
 
@@ -93,6 +97,7 @@ void Kopiec:: gotowiec(string sp, string sn, int v) {				//GOTOWIEC
 	}
 }
 
+//tworzenie kopca o zadanej wielkosci
 void Kopiec::stworz(int size)				
 {
 	ilosc = size;
@@ -100,24 +105,27 @@ void Kopiec::stworz(int size)
 	srand(time(NULL));
 	int liczba;
 	for (int i = 0; i < ilosc; i++) {
-		liczba = rand() % 100;
+		liczba = rand() % 1000000;
 		kopiec[i] = liczba;
 	}
 	floyd();
 }
 
 
-
+//zwraca rodzica i
 int rodzic(int i) {
 	return (i-1) / 2;
 }
+//zwraca lewego potomka i
 int lewy(int i) {
 	return 2*i + 1;
 }
+//zwraca prawego potomka i
 int prawy(int i) {
 	return 2*i + 2;
 }
 
+//funkjca naprawiajaca w gore 
 void Kopiec::naprawianieg(int rozmiar)
 {
 	
@@ -126,7 +134,7 @@ void Kopiec::naprawianieg(int rozmiar)
 			int x = kopiec[rozmiar];
 			kopiec[rozmiar] = kopiec[rodzic(rozmiar)];
 			kopiec[rodzic(rozmiar)] = x;
-			
+
 		}
 		rozmiar = rodzic(rozmiar);
 	}
@@ -134,6 +142,7 @@ void Kopiec::naprawianieg(int rozmiar)
 	
 }
 
+//funkcja usuwajaca wartosc z kopca
 void Kopiec::usunW(int i) {
 
 	int poz = czyZawiera(i);
@@ -148,37 +157,50 @@ void Kopiec::usunW(int i) {
 	else naprawianieg(poz);
 }
 
+//funkcja usuwajaca korzen (do czasow)
+void Kopiec::usunKorzen() {
 
+	kopiec[0] = kopiec[ilosc - 1];
+	kopiec[ilosc - 1] = NULL;
+	ilosc--;
+	naprawianied(0);
+}
+
+// funkcja naprawiajaca w dol od zadanego id
 void Kopiec::naprawianied(int id)
 {
-
 	int bufW, bufId;
 	boolean x;
-	for (int i = id; i <= rodzic(ilosc); i++) {
-		x = false;
-		bufW = kopiec[i];
-		bufId = i;
-		if (kopiec[lewy(i)] >= bufW) {
-			bufW = kopiec[lewy(i)];
-			bufId = lewy(i);
-			id = lewy(i);
-			x = true;
-		}
-		if (kopiec[prawy(i)] > bufW) {
-			bufW = kopiec[prawy(i)];
-			bufId = prawy(i);
-			id = prawy(i);
-			x = true;
-		}
-		if (x) {
-			kopiec[bufId] = kopiec[i];
-			kopiec[i] = bufW;
-		}
+		while (id <=rodzic(ilosc)) {
+			x = false;
+			bufW = kopiec[id];
+			bufId = id;
+			if (kopiec[lewy(id)] >= bufW) {
+				bufW = kopiec[lewy(id)];
+				bufId = lewy(id);
+				x = true;
+			}
+			if (kopiec[prawy(id)] > bufW) {
+				bufW = kopiec[prawy(id)];
+				bufId = prawy(id);
+				x = true;
+			}
+			if (x) {
+				kopiec[bufId] = kopiec[id];
+				kopiec[id] = bufW;
+				id = bufId;
+			}
+			else return;
+		
 	}
+	return;
+
+
+
 }
 
 
-
+//funkcja naprawiajaca w dol (do algorytmu floyda)
 void Kopiec::naprawienieOdId(int id) {
 	
 	if (id >= ilosc)return;
@@ -206,7 +228,7 @@ void Kopiec::naprawienieOdId(int id) {
 
 
 
-
+//naprawianie od najstarszego rodzica
 void Kopiec::floyd() {
 	int x = rodzic(ilosc);
 	for (int i = x; i >= 0; i--) {
@@ -214,7 +236,7 @@ void Kopiec::floyd() {
 	}
 }
 
-
+//funkcja wykonujue pomiary czasow
 void Kopiec::czas(int ilosc_wyk, int wielkosc, int ilosc_op) {									//OK
 	ofstream plik1("czasy_kopiec1.txt");
 	ofstream plik2("czasy_kopiec2.txt");
@@ -227,16 +249,11 @@ void Kopiec::czas(int ilosc_wyk, int wielkosc, int ilosc_op) {									//OK
 	int wielkoscb, ilosc_opb;
 	auto old = steady_clock::now();
 	auto t1 = steady_clock::now() - old;
-	auto t2 = steady_clock::now() - old;
-	auto t3 = steady_clock::now() - old;
-	auto t4 = steady_clock::now() - old;
-	auto t5 = steady_clock::now() - old;
-	auto t6 = steady_clock::now() - old;
-
+	int liczba;
 	plik1 << "Dodawanie elementu\n";
 	wielkoscb = wielkosc;
 	ilosc_opb = ilosc_op;
-	for (int i = 0; i < 8; i++) {
+	for (int i = 0; i < 10; i++) {
 		old = steady_clock::now();
 		t1 = steady_clock::now() - old;
 		wielkoscb = wielkoscb * 2;
@@ -245,11 +262,19 @@ void Kopiec::czas(int ilosc_wyk, int wielkosc, int ilosc_op) {									//OK
 		for (int i = 0; i < ilosc_wyk; i++) {
 			delete kopiec;
 			stworz(wielkoscb);
-			old = steady_clock::now();
-			for (int j = 0; j < ilosc_opb; j++) {
-				dodaj(55);
+			int* x = new int[ilosc_opb];
+			kopiec = new int[1000000];
+
+			for (int p = 0; p < ilosc_opb; p++) {
+				x[p] = rand() % 1000000;
 			}
-			t1 += steady_clock::now() - old;
+			for (int j = 0; j < ilosc_opb; j++) {
+				
+				old = steady_clock::now();
+				dodaj(x[j]);
+				t1 += steady_clock::now() - old;
+			}
+			
 		}
 		cout << endl << i << " Uzyskany czas [ns]:		";
 		cout << duration_cast<nanoseconds>(t1).count();
@@ -260,66 +285,75 @@ void Kopiec::czas(int ilosc_wyk, int wielkosc, int ilosc_op) {									//OK
 	plik2 << "Tworzenie kopca (normalna metoda)\n";
 	wielkoscb = wielkosc;
 	ilosc_opb = ilosc_op;
-	for (int i = 0; i < 8; i++) {
+
+	for (int i = 0; i < 10; i++) {
 		old = steady_clock::now();
-		t2 = steady_clock::now() - old;
+		t1 = steady_clock::now() - old;
 
 		wielkoscb = wielkoscb * 2;
 		ilosc_opb = wielkoscb / 20;
-		cout << "\n\nTworzenie kopca (normalna metoda)";
+		cout <<"\n\nTworzenie kopca (normalna metoda)";
 		for (int i = 0; i < ilosc_wyk; i++) {
 			int* x = new int[wielkoscb];
+			ilosc = 0;
+			kopiec = new int[1000000];
 			for (int p = 0; p < wielkoscb; p++) {
-				x[p] = rand() % 100;
+				x[p] = rand() % 1000000;
 			}
-			old = steady_clock::now();
-			for (int j = 0; j < ilosc_opb; j++) {
+			
+			for (int j = 0; j < wielkoscb; j++) {
+				old = steady_clock::now();
 				dodaj(x[j]);
+				t1 += steady_clock::now() - old;
 			}
-			t2 += steady_clock::now() - old;
+			
 		}
 		cout << "\nUzyskany czas [ns]:		";
-		cout << duration_cast<nanoseconds>(t2).count();
-		cout << "\nSredni czas [ns]:		" << duration_cast<nanoseconds>(t2).count() / (ilosc_wyk );
-		plik2 << wielkoscb << ";" << duration_cast<nanoseconds>(t2).count() / (ilosc_wyk) << endl;
+		cout << duration_cast<nanoseconds>(t1).count();
+		cout << "\nSredni czas [ns]:		" << duration_cast<nanoseconds>(t1).count() / (ilosc_wyk );
+		plik2 << wielkoscb << ";" << duration_cast<nanoseconds>(t1).count() / (ilosc_wyk) << endl;
+		
 	}
 	/////////////////////////////////////////////////////////////////////////////////////////////
 	plik3 << "Tworzenie kopca (floyd)\n";
 	wielkoscb = wielkosc;
 	ilosc_opb = ilosc_op;
-	for (int i = 0; i < 8; i++) {
+	for (int i = 0; i < 10; i++) {
 		old = steady_clock::now();
-		t3 = steady_clock::now() - old;
+		t1 = steady_clock::now() - old;
 
 		wielkoscb = wielkoscb * 2;
 		ilosc_opb = wielkoscb / 20;
 		cout << "\n\nTworzenie kopca (floyd)";
 		for (int i = 0; i < ilosc_wyk; i++) {
 			ilosc = wielkoscb;
-			kopiec = new int[wielkoscb];
+			kopiec = new int[1000000];
 			int* x = new int[wielkoscb];
 			for (int p = 0; p < wielkoscb; p++) {
-				x[p] = rand() % 100;
+				x[p] = rand() % 1000000;
+			}
+			
+			for (int p = 0; p < wielkoscb-1; p++) {
+				old = steady_clock::now();
+				kopiec[p] = x[p];
+				t1 += steady_clock::now() - old;
 			}
 			old = steady_clock::now();
-			for (int p = 0; p < wielkoscb - 1; p++) {
-				kopiec[p] =x[p];
-			}
 				floyd();
-			t3 += steady_clock::now() - old;
+				t1 += steady_clock::now() - old;
 		}
 		cout << "\nUzyskany czas [ns]:		";
-		cout << duration_cast<nanoseconds>(t3).count();
-		cout << "\nSredni czas [ns]:		" << duration_cast<nanoseconds>(t3).count() / (ilosc_wyk);
-		plik3 << wielkoscb << ";" << duration_cast<nanoseconds>(t3).count() / (ilosc_wyk) << endl;
+		cout << duration_cast<nanoseconds>(t1).count();
+		cout << "\nSredni czas [ns]:		" << duration_cast<nanoseconds>(t1).count() / (ilosc_wyk);
+		plik3 << wielkoscb << ";" << duration_cast<nanoseconds>(t1).count() / (ilosc_wyk) << endl;
 	}
 	/////////////////////////////////////////////////////////////////////////////////////////////
 	plik4 << "Uzuwanie korzenia\n";
 	wielkoscb = wielkosc;
 	ilosc_opb = ilosc_op;
-	for (int i = 0; i < 8; i++) {
+	for (int i = 0; i < 10; i++) {
 		old = steady_clock::now();
-		t4 = steady_clock::now() - old;
+		t1 = steady_clock::now() - old;
 
 		wielkoscb = wielkoscb * 2;
 		ilosc_opb = wielkoscb / 20;
@@ -329,23 +363,23 @@ void Kopiec::czas(int ilosc_wyk, int wielkosc, int ilosc_op) {									//OK
 			stworz(wielkoscb);
 			old = steady_clock::now();
 			for (int j = 0; j < ilosc_opb; j++) {
-				usunW(kopiec[0]);
+				usunKorzen();
 			}
-			t4 += steady_clock::now() - old;
+			t1 += steady_clock::now() - old;
 		}
 		cout << "\nUzyskany czas [ns]:		";
-		cout << duration_cast<nanoseconds>(t4).count();
-		cout << "\nSredni czas [ns]:		" << duration_cast<nanoseconds>(t4).count() / (ilosc_wyk * ilosc_opb);
-		plik4 << wielkoscb << ";" << duration_cast<nanoseconds>(t4).count() / (ilosc_wyk * ilosc_opb) << endl;
+		cout << duration_cast<nanoseconds>(t1).count();
+		cout << "\nSredni czas [ns]:		" << duration_cast<nanoseconds>(t1).count() / (ilosc_wyk * ilosc_opb);
+		plik4 << wielkoscb << ";" << duration_cast<nanoseconds>(t1).count() / (ilosc_wyk * ilosc_opb) << endl;
 	}
-	/////////////////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////////////////
 	plik5 << "Wyszukiwanie elementu\n";
 	wielkoscb = wielkosc;
 	ilosc_opb = ilosc_op;
 	int temp;
-	for (int i = 0; i < 8; i++) {
+	for (int i = 0; i < 10; i++) {
 		old = steady_clock::now();
-		t5 = steady_clock::now() - old;
+		t1 = steady_clock::now() - old;
 		wielkoscb = wielkoscb * 2;
 		ilosc_opb = ilosc_opb * 2;
 		cout << "\n\nWyszukiwanie elementu";
@@ -354,18 +388,18 @@ void Kopiec::czas(int ilosc_wyk, int wielkosc, int ilosc_op) {									//OK
 			stworz(wielkoscb);
 
 			for (int j = 0; j < ilosc_opb; j++) {
-				a = rand()%1000;
+				a = rand()%1000000;
 				old = steady_clock::now();
 				temp=czyZawiera(a);
-				t5 += steady_clock::now() - old;
+				t1 += steady_clock::now() - old;
 			}
 
 		}
 		cout << temp;
 		cout << "\nUzyskany czas [ns]:		";
-		cout << duration_cast<nanoseconds>(t5).count();
-		cout << "\nSredni czas [ns]:		" << duration_cast<nanoseconds>(t5).count() / (ilosc_wyk * ilosc_opb);
-		plik5 << wielkoscb << ";" << duration_cast<nanoseconds>(t5).count() / (ilosc_wyk * ilosc_opb) << endl;
+		cout << duration_cast<nanoseconds>(t1).count();
+		cout << "\nSredni czas [ns]:		" << duration_cast<nanoseconds>(t1).count() / (ilosc_wyk * ilosc_opb);
+		plik5 << wielkoscb << ";" << duration_cast<nanoseconds>(t1).count() / (ilosc_wyk * ilosc_opb) << endl;
 	}
 	plik1.close();
 	plik2.close();

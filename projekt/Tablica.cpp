@@ -1,6 +1,6 @@
 #include "tablica.h"
 #include "chrono"
-
+using namespace std;
 Tablica::Tablica(){
 	ilosc = 0;
 	tablica = new int[0];
@@ -16,6 +16,7 @@ Tablica :: ~Tablica() {
 	delete tablica;
 }
 
+//funkcja pobiera dane z pliku tekstoweg i generuje z nich tablicê
 void Tablica :: daneZPliku(string plik){									//OK
 	ifstream odczyt(plik);
 	if (odczyt.is_open()) {
@@ -35,7 +36,7 @@ void Tablica :: daneZPliku(string plik){									//OK
 }
 
 
-
+//funkcja zwraca numer indeksu pod ktorym znajduje sie szukany element (lub -1 jak go nie ma)
 int Tablica :: czyZawiera(int wartosc) {									//OK
 	
 	for (int i = 0; i < ilosc; i++) {
@@ -46,6 +47,7 @@ int Tablica :: czyZawiera(int wartosc) {									//OK
 	return -1;
 }
 
+//funkcja dodaje element do tablicy (odpowiednio realokuje)
 void Tablica :: dodaj(int index, int wartosc) {									//OK
 	if (ilosc == 0 && index==0) {
 		ilosc = 1;
@@ -68,6 +70,7 @@ void Tablica :: dodaj(int index, int wartosc) {									//OK
 }
 
 
+//funkcja usuwa z podanego indexu element
 void Tablica::usun(int index) {									//OK
 	if (index < ilosc) {
 		ilosc--;
@@ -86,6 +89,7 @@ void Tablica::usun(int index) {									//OK
 
 }
 
+//funkcja wyswietla elementy tablicy
 void Tablica :: wyswietl() {									//OK
 
 	for (int i = 0; i < ilosc; i++) {
@@ -93,17 +97,20 @@ void Tablica :: wyswietl() {									//OK
 	}
 	
 }
+
+//funkcja tworzy tablice o zadanej wielkosci i wypelnia losowymi wartosciami
 void  Tablica :: stworz(int size) {									//OK
 	ilosc = size;
 	tablica = new int[ilosc];
 	srand(time(NULL));
 	int liczba;
 	for (int i = 0; i < ilosc; i++) {
-		liczba = rand() % 100;
+		liczba = rand() % 1000000;
 		tablica[i] = liczba;
 	}
 }
 
+//funkcja wykonujue pomiary czasow
 void Tablica::czas(int ilosc_wyk, int wielkosc, int ilosc_op) {									//OK
 	ofstream plik1("czasy_tablica1.txt");
 	ofstream plik2("czasy_tablica2.txt");
@@ -116,15 +123,10 @@ void Tablica::czas(int ilosc_wyk, int wielkosc, int ilosc_op) {									//OK
 	srand(time(NULL));
 	int a;
 	int wielkoscb, ilosc_opb;
+	
 		auto old = steady_clock::now();
 		auto t1 = steady_clock::now() - old;
-		auto t2 = steady_clock::now() - old;
-		auto t3 = steady_clock::now() - old;
-		auto t4 = steady_clock::now() - old;
-		auto t5 = steady_clock::now() - old;
-		auto t6 = steady_clock::now() - old;
-		auto t7 = steady_clock::now() - old;
-
+		
 		plik1 << "Dodawanie na pocz¹tek\n";
 		wielkoscb = wielkosc;
 		ilosc_opb = ilosc_op;
@@ -137,11 +139,14 @@ void Tablica::czas(int ilosc_wyk, int wielkosc, int ilosc_op) {									//OK
 			cout << "\nDodawanie na poczatek";
 			for (int i = 0; i < ilosc_wyk; i++) {
 				stworz(wielkoscb);
-				old = steady_clock::now();
+				
 				for (int j = 0; j < ilosc_opb; j++) {
-					dodaj(0,55);
+					a = rand() % 1000000;
+					old = steady_clock::now();
+					dodaj(0,a);
+					t1 += steady_clock::now() - old;
 				}
-				t1 += steady_clock::now() - old;
+			
 			}
 			cout << endl << i << " Uzyskany czas [ns]:		";
 			cout << duration_cast<nanoseconds>(t1).count();
@@ -154,31 +159,35 @@ void Tablica::czas(int ilosc_wyk, int wielkosc, int ilosc_op) {									//OK
 		ilosc_opb = ilosc_op;
 		for (int i = 0; i < 10; i++) {
 			old = steady_clock::now();
-			t2 = steady_clock::now() - old;
+			t1 = steady_clock::now() - old;
 
 			wielkoscb = wielkoscb * 2;
 			ilosc_opb = wielkoscb / 20;
 			cout << "\n\nDodawanie na koniec";
 			for (int i = 0; i < ilosc_wyk; i++) {
 				stworz(wielkoscb);
-				old = steady_clock::now();
+				
 				for (int j = 0; j < ilosc_opb; j++) {
+					a = rand() % 1000000;
+					old = steady_clock::now();
 					dodaj(wielkoscb-1-j,55);
+					t1 += steady_clock::now() - old;
 				}
-				t2 += steady_clock::now() - old;
+				
 			}
 			cout << endl << i << " Uzyskany czas [ns]:		";
-			cout << duration_cast<nanoseconds>(t2).count();
-			cout << "\nSredni czas [ns]:		" << duration_cast<nanoseconds>(t2).count() / (ilosc_wyk * ilosc_opb);
-			plik2 << wielkoscb << ";" << duration_cast<nanoseconds>(t2).count() / (ilosc_wyk * ilosc_opb) << endl;
+			cout << duration_cast<nanoseconds>(t1).count();
+			cout << "\nSredni czas [ns]:		" << duration_cast<nanoseconds>(t1).count() / (ilosc_wyk * ilosc_opb);
+			plik2 << wielkoscb << ";" << duration_cast<nanoseconds>(t1).count() / (ilosc_wyk * ilosc_opb) << endl;
 		}
 	/////////////////////////////////////////////////////////////////////////////////////////////
 		plik3 << "Dodawanie nie na poczatek nie na koniec\n";
 		wielkoscb = wielkosc;
 		ilosc_opb = ilosc_op;
+		int liczba;
 		for (int i = 0; i < 10; i++) {
 			old = steady_clock::now();
-			t3 = steady_clock::now() - old;
+			t1 = steady_clock::now() - old;
 
 			wielkoscb = wielkoscb * 2;
 			ilosc_opb = wielkoscb / 20;
@@ -188,16 +197,17 @@ void Tablica::czas(int ilosc_wyk, int wielkosc, int ilosc_op) {									//OK
 
 				for (int j = 0; j < ilosc_opb; j++) {
 					a = 1 + rand() % (wielkoscb + j);
+					liczba = rand() % 1000000;
 					old = steady_clock::now();
-					dodaj(a, 55);
-					t3 += steady_clock::now() - old;
+					dodaj(a, liczba);
+					t1 += steady_clock::now() - old;
 				}
 
 			}
 			cout << endl << i << " Uzyskany czas [ns]:		";
-			cout << duration_cast<nanoseconds>(t3).count();
-			cout << "\nSredni czas [ns]:		" << duration_cast<nanoseconds>(t3).count() / (ilosc_wyk * ilosc_opb);
-			plik3 << wielkoscb << ";" << duration_cast<nanoseconds>(t3).count() / (ilosc_wyk * ilosc_opb) << endl;
+			cout << duration_cast<nanoseconds>(t1).count();
+			cout << "\nSredni czas [ns]:		" << duration_cast<nanoseconds>(t1).count() / (ilosc_wyk * ilosc_opb);
+			plik3 << wielkoscb << ";" << duration_cast<nanoseconds>(t1).count() / (ilosc_wyk * ilosc_opb) << endl;
 		}
 	/////////////////////////////////////////////////////////////////////////////////////////////
 		plik4 << "Uzuwanie z pocz¹tku\n";
@@ -205,7 +215,7 @@ void Tablica::czas(int ilosc_wyk, int wielkosc, int ilosc_op) {									//OK
 		ilosc_opb = ilosc_op;
 		for (int i = 0; i < 10; i++) {
 			old = steady_clock::now();
-			t4 = steady_clock::now() - old;
+			t1 = steady_clock::now() - old;
 
 			wielkoscb = wielkoscb * 2;
 			ilosc_opb = wielkoscb / 20;
@@ -216,12 +226,12 @@ void Tablica::czas(int ilosc_wyk, int wielkosc, int ilosc_op) {									//OK
 				for (int j = 0; j < ilosc_opb; j++) {
 					usun(0);
 				}
-				t4 += steady_clock::now() - old;
+				t1 += steady_clock::now() - old;
 			}
 			cout << endl << i << " Uzyskany czas [ns]:		";
-			cout << duration_cast<nanoseconds>(t4).count();
-			cout << "\nSredni czas [ns]:		" << duration_cast<nanoseconds>(t4).count() / (ilosc_wyk * ilosc_opb);
-			plik4 << wielkoscb << ";" << duration_cast<nanoseconds>(t4).count() / (ilosc_wyk * ilosc_opb) << endl;
+			cout << duration_cast<nanoseconds>(t1).count();
+			cout << "\nSredni czas [ns]:		" << duration_cast<nanoseconds>(t1).count() / (ilosc_wyk * ilosc_opb);
+			plik4 << wielkoscb << ";" << duration_cast<nanoseconds>(t1).count() / (ilosc_wyk * ilosc_opb) << endl;
 		}
 	/////////////////////////////////////////////////////////////////////////////////////////////
 		plik5 << "Usowanie ze srodka\n";
@@ -229,7 +239,7 @@ void Tablica::czas(int ilosc_wyk, int wielkosc, int ilosc_op) {									//OK
 		ilosc_opb = ilosc_op;
 		for (int i = 0; i < 10; i++) {
 			old = steady_clock::now();
-			t5 = steady_clock::now() - old;
+			t1 = steady_clock::now() - old;
 
 			wielkoscb = wielkoscb * 2;
 			ilosc_opb = ilosc_opb *2;
@@ -241,13 +251,13 @@ void Tablica::czas(int ilosc_wyk, int wielkosc, int ilosc_op) {									//OK
 					a = 1 + rand() % (wielkoscb - j - 1);
 					old = steady_clock::now();
 					usun(a);
-					t5 += steady_clock::now() - old;
+					t1 += steady_clock::now() - old;
 				}
 			}
 			cout << endl << i << " Uzyskany czas [ns]:		";
-			cout << duration_cast<nanoseconds>(t5).count();
-			cout << "\nSredni czas [ns]:		" << duration_cast<nanoseconds>(t5).count() / (ilosc_wyk * ilosc_opb);
-			plik5 << wielkoscb << ";" << duration_cast<nanoseconds>(t5).count() / (ilosc_wyk * ilosc_opb) << endl;
+			cout << duration_cast<nanoseconds>(t1).count();
+			cout << "\nSredni czas [ns]:		" << duration_cast<nanoseconds>(t1).count() / (ilosc_wyk * ilosc_opb);
+			plik5 << wielkoscb << ";" << duration_cast<nanoseconds>(t1).count() / (ilosc_wyk * ilosc_opb) << endl;
 		}
 
 		/////////////////////////////////////////////////////////////////////////////////////////////
@@ -256,7 +266,7 @@ void Tablica::czas(int ilosc_wyk, int wielkosc, int ilosc_op) {									//OK
 		ilosc_opb = ilosc_op;
 		for (int i = 0; i < 10; i++) {
 			old = steady_clock::now();
-			t6 = steady_clock::now() - old;
+			t1 = steady_clock::now() - old;
 
 			wielkoscb = wielkoscb * 2;
 			ilosc_opb = ilosc_opb * 2;
@@ -266,22 +276,22 @@ void Tablica::czas(int ilosc_wyk, int wielkosc, int ilosc_op) {									//OK
 				for (int j = 0; j < ilosc_opb; j++) {
 					old = steady_clock::now();
 					usun(wielkoscb-1-j);
-					t6 += steady_clock::now() - old;
+					t1 += steady_clock::now() - old;
 				}
 			}
 			cout << endl << i << " Uzyskany czas [ns]:		";
-			cout << duration_cast<nanoseconds>(t6).count();
-			cout << "\nSredni czas [ns]:		" << duration_cast<nanoseconds>(t6).count() / (ilosc_wyk * ilosc_opb);
-			plik6 << wielkoscb << ";" << duration_cast<nanoseconds>(t6).count() / (ilosc_wyk * ilosc_opb) << endl;
+			cout << duration_cast<nanoseconds>(t1).count();
+			cout << "\nSredni czas [ns]:		" << duration_cast<nanoseconds>(t1).count() / (ilosc_wyk * ilosc_opb);
+			plik6 << wielkoscb << ";" << duration_cast<nanoseconds>(t1).count() / (ilosc_wyk * ilosc_opb) << endl;
 		}
-	/////////////////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////////////////
 		plik7 << "Wyszukiwanie elementu\n";
 		wielkoscb = wielkosc;
 		ilosc_opb = ilosc_op;
 		int temp;
 		for (int i = 0; i < 10; i++) {
 			old = steady_clock::now();
-			t7 = steady_clock::now() - old;
+			t1 = steady_clock::now() - old;
 
 			wielkoscb = wielkoscb * 2;
 			ilosc_opb = wielkoscb / 20;
@@ -291,18 +301,18 @@ void Tablica::czas(int ilosc_wyk, int wielkosc, int ilosc_op) {									//OK
 				stworz(wielkoscb);
 
 				for (int j = 0; j < ilosc_opb; j++) {
-					a = rand() % 1000;
+					a = rand() % 1000000;
 					old = steady_clock::now();
 					temp=czyZawiera(a);
-					t7 += steady_clock::now() - old;
+					t1 += steady_clock::now() - old;
 				}
 
 			}
 			cout << temp;
 			cout << endl << i << " Uzyskany czas [ns]:		";
-			cout << duration_cast<nanoseconds>(t7).count();
-			cout << "\nSredni czas [ns]:		" << duration_cast<nanoseconds>(t7).count() / (ilosc_wyk * ilosc_opb);
-			plik7 << wielkoscb << ";" << duration_cast<nanoseconds>(t7).count() / (ilosc_wyk * ilosc_opb) << endl;
+			cout << duration_cast<nanoseconds>(t1).count();
+			cout << "\nSredni czas [ns]:		" << duration_cast<nanoseconds>(t1).count() / (ilosc_wyk * ilosc_opb);
+			plik7 << wielkoscb << ";" << duration_cast<nanoseconds>(t1).count() / (ilosc_wyk * ilosc_opb) << endl;
 		}
 
 	plik1.close();
